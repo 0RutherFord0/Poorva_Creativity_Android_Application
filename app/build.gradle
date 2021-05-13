@@ -42,7 +42,11 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-messaging:21.1.0'
-    //Firebase Start Execulia
+    //Firebase End Execulia
+    //Crash Check Start
+    apply plugin: 'com.google.firebase.crashlytics'
+    implementation 'com.google.firebase:firebase-crashlytics:18.0.0'
+    //Crash Check End
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -47,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //Firebase Execulia Start
         FirebaseMessaging.getInstance().subscribeToTopic("notifications");
-
+        //Firebase Execulia End
 
         //Review Manager Start
         manager = ReviewManagerFactory.create(MainActivity.this);
