@@ -3,19 +3,33 @@ package com.execulia.poorvacreativity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+import com.google.android.play.core.tasks.OnCompleteListener;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,13 +37,47 @@ public class MainActivity extends AppCompatActivity {
     private WebView webview;
     SwipeRefreshLayout mySwipeRefreshLayout;
     private ProgressBar progressBar;
-
+    //Review Manager Start
+    ReviewManager manager;
+    ReviewInfo reviewInfo;
+    //Review Manager End
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("notifications");
+
+
+        //Review Manager Start
+        manager = ReviewManagerFactory.create(MainActivity.this);
+        Task<ReviewInfo> request = manager.requestReviewFlow();
+
+        request.addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(@NonNull Task<ReviewInfo> task) {
+
+
+                if(task.isSuccessful()){
+                    reviewInfo = task.getResult();
+                    Task<Void> flow = manager.launchReviewFlow(MainActivity.this, reviewInfo);
+
+                    flow.addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+
+                        }
+                    });
+                }else {
+                    Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+        });
+        //Review Manager End
 
         if( ! CheckNetwork.isInternetAvailable(this)) //returns true if internet available
         {
@@ -40,13 +88,14 @@ public class MainActivity extends AppCompatActivity {
             new AlertDialog.Builder(this) //alert the person knowing they are about to close
                     .setTitle("No internet connection available")
                     .setMessage("Please Check you're Mobile data or Wifi network.")
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Connect", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startActivity( new Intent(Settings.ACTION_WIFI_SETTINGS));
                             finish();
                         }
                     })
-                    //.setNegativeButton("No", null)
+//                   .setNegativeButton("No", null)
                     .show();
 
         }
@@ -84,11 +133,23 @@ public class MainActivity extends AppCompatActivity {
 
 
     private class WebViewClientDemo extends WebViewClient {
+
         @Override
+        // URL Scheme Change Start
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
+            if (url.startsWith("market://")||url.startsWith("whatsapp://")||url.startsWith("tel:")||url.startsWith("mailto:"))
+            {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+                return true;
+            }
+            else{
+                view.loadUrl(url);
+                return true;
+            }
         }
+        // URL Scheme Change End
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);

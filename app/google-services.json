@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1022673051560",
+    "project_id": "poorvacreativity-execulia",
+    "storage_bucket": "poorvacreativity-execulia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022673051560:android:53d28ca364110b2424079d",
+        "android_client_info": {
+          "package_name": "com.execulia.poorvacreativity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022673051560-3edrpr4gju9lvhoojbaa4faiqn5fqndc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmW3BG0S7RoMcEJEKj2jEuJSplY9iqZM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022673051560-3edrpr4gju9lvhoojbaa4faiqn5fqndc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
